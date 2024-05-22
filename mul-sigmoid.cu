@@ -4,6 +4,7 @@ __device__ float sigmoid(float x) {
     return 1.0f / (1.0f + expf(-x));
 }
 
+extern "C"
 __global__ void elementwise_multiply_sigmoid(float* A, float* C, int width, int height) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;

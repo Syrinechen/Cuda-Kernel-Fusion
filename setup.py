@@ -6,13 +6,13 @@ import numpy as np
 ext_modules = [
     Extension(
         "kernel_wrapper",
-        sources=["kernel_wrapper.pyx", "path/to/your/cuda_kernel.cu"],
+        sources=["kernel_wrapper.pyx", "cuda_kernel.cu"],
         library_dirs=['/usr/local/cuda/lib64'],
         libraries=['cudart'],
         language='c++',
         extra_compile_args={
             'gcc': [],
-            'nvcc': ['-arch=sm_52']
+            'nvcc': ['-arch=sm_52', '--ptxas-options=-v', '-c', '--compiler-options', "'-fPIC'"]
         },
         include_dirs=[np.get_include(), '/usr/local/cuda/include']
     )

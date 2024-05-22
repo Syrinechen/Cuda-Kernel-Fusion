@@ -8,8 +8,13 @@ cdef extern from "cuda_runtime.h":
         cudaMemcpyHostToDevice
         cudaMemcpyDeviceToHost
 
-cdef extern from "path/to/your/cuda_kernel.cu":
+cdef extern from "cuda_kernel.cu":
     void elementwise_multiply_sigmoid(float* A, float* C, int width, int height)
+
+import numpy as np
+cimport numpy as np
+import pycuda.driver as cuda
+import pycuda.autoinit
 
 def multiply_sigmoid(np.ndarray[np.float32_t, ndim=2] A):
     cdef int width = A.shape[1]
@@ -30,11 +35,11 @@ def multiply_sigmoid(np.ndarray[np.float32_t, ndim=2] A):
     
     # Define block and grid dimensions
     cdef int block_dim = 16
-    cdef dim3 block(block_dim, block_dim)
-    cdef dim3 grid((width + block_dim - 1) // block_dim, (height + block_dim - 1) // block_dim)
+    block = (block_dim, block_dim, 1)
+    grid = ((width + block_dim - 1) // block_dim, (height + block_dim - 1) // block_dim, 1)
     
     # Launch kernel
-    elementwise_multiply_sigmoid<<<grid, block>>>(d_A, d_C, width, height)
+    elementwise_multiply_sigmoid[grid, block](d_A, d_C, width, height)
     
     # Copy result from device to host
     cudaMemcpy(&C[0, 0], d_C, size, cudaMemcpyDeviceToHost)
