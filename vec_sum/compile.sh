@@ -1,0 +1,2 @@
+nvcc -I/home/onyxia/work/CudaCythonSamples/common -I cuda -lib -Xcompiler -fPIC -Xcompiler -fopenmp -odir lib -o lib/libkernel.so cuda/kernel.cu 2>&1 | tee build.log
+python setup.py build_ext --inplace
